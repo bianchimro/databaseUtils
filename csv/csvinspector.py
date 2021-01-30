@@ -71,7 +71,8 @@ class CSVInspector(object):
 
     def createTable(self,tablename="TABLE_1"):
         sql = "CREATE TABLE IF NOT EXISTS \""+tablename+"\" (\n"
-        sql = sql+"  id INTEGER PRIMARY KEY, \n"
+        if 'id' not in self.names and 'ID' not in self.names:
+            sql = sql+"  id INTEGER PRIMARY KEY, \n"
         for field in self.names:
             meta = self.meta[field]
             sql = sql+"  "+field+" \t "+ meta['type'] + ",\n"
@@ -179,7 +180,10 @@ class CSVInspector(object):
             out[ metaItem['fieldName']]['types'] = candidates.keys()
             
             out[ metaItem['fieldName']]['type'] = candidates.keys()[0]
-            out[ metaItem['fieldName']]['stats_type'] = metaItem['stats_type'][candidates.keys()[0]]
+            try:
+                out[ metaItem['fieldName']]['stats_type'] = metaItem['stats_type'][candidates.keys()[0]]
+            except:
+                pass
             out[ metaItem['fieldName']]['stats'] = metaItem['stats']
         return out
         
@@ -190,6 +194,9 @@ if __name__ == '__main__':
     fn = sys.argv[1]
     inspector = CSVInspector(fn, types=SQLITE_TYPES)
     inspector.analyze()
+    if '--analyze' in sys.argv:
+        print inspector.meta
+    
     if '--create' in sys.argv:
         inspector.createTable(tablename='test1')
     if '--insert' in sys.argv:

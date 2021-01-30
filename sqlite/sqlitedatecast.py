@@ -110,10 +110,15 @@ class Corrector(object):
         else:
             #altering table
             for r in records:
-                if r[col] is not None:
+                if r[col] is not None and r[col]:
+                    print "row", r
                     originalDate = r[col]
-                    correctDate = datetime.datetime.strptime(originalDate, choosenFormat )
-                    sqliteDate = datetime.datetime.strftime(correctDate, SQLITE_DATE_FORMAT)
+                    try:
+                        correctDate = datetime.datetime.strptime(originalDate, choosenFormat )
+                        sqliteDate = datetime.datetime.strftime(correctDate, SQLITE_DATE_FORMAT)
+                    except:
+                        sqliteDate = None
+                    
                     q = "UPDATE %s set %s=? WHERE %s=?" % (tbl, col, col)
                     self.conn.execute(q, (sqliteDate, originalDate))
             

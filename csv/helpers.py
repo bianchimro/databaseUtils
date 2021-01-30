@@ -13,15 +13,15 @@ def escapeSQLValue(value):
         return 'NULL'
 
     out = str(value)
-    esc = False
-
+    esc=False    
     if out.find("'") > -1:
          out = out.replace("'", "\\'")
          esc = True
     out = "'" + out + "'"
+    
 
     if esc:
-        out = "E" + out
+        out = "r" + out
 
     return out
     
